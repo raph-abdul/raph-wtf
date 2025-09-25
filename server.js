@@ -11,7 +11,7 @@ app.get('/', (req, res)=>{
 	let clientIp = req.ip
 	let clientIpAlternatives = req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : req.socket.remoteAddress;
 	res.status(200);
-	res.send("I have your IP address: "+ clientIp +" - now I have to kill you.");
+	res.send(".");
 });
 
 app.listen(PORT, (error) =>{
