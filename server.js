@@ -1,22 +1,30 @@
 const express = require('express');
+const next = require('next');
 
-const app = express();
-const PORT = 3000;
+const dev = process.env.NODE_ENV !== 'production';
+const app = next({ dev });
+const handle = app.getRequestHandler();
 
-// Must be set for req.ip to work correctly begind a proxy/load balancer
-// 'trust proxy' can be true or an array of IP addresses/subnets
-app.set('trust proxy', true); 
+app.prepare().then(() => {
 
-app.get('/', (req, res)=>{
+	const server = express();
+
+  // Custom API routes
+  server.get('/old-page', (req, res) => {
 	let clientIp = req.ip
-	res.status(200);
-	res.send("raph, wtf? "+ clientIp);
+	res.json({ message: "raph, wtf."+ clientIp });
+  });
+
+  // Let Next.js handle everything else
+  server.all('/{*rest}', (req, res) => {
+	let clientIp = req.ip
+	res.json({ message: "raph, wtf."+ clientIp })
+//    return handle(req, res);
+  });
+
+  server.listen(3000, (err) => {
+	if (err) throw err;
+	console.log('> Ready on http://localhost:3000');
+  });
 });
 
-app.listen(PORT, (error) =>{
-	if(!error)
-		console.log ("Server running app listening to port "+ PORT);
-	else
-		console.log("Error occurrer", error);
-	}
-);
