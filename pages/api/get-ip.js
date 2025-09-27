@@ -15,6 +15,6 @@ export default function handler(req, res) {
   // Send the result as a JSON response (like res.json() in Express)
   res.status(200).json({ 
     clientIp: clientIp,
-    message: `Your IP address is: ${clientIp}`
+    message: `Your IP address: ${clientIp}`
   });
 }
