@@ -1,22 +1,19 @@
 const express = require('express');
 const next = require('next');
+const url = require('url');
 
 const dev = process.env.NODE_ENV !== 'production';
-const app = next({ dev });
+const app = next({ dev: process.env.NODE_ENV !== 'production' });
 const handle = app.getRequestHandler();
 
-app.prepare().then(() => {
+const server = express();
 
-	const server = express();
-
-	server.all('/{*rest}', (req, res) => {
-		let clientIp = req.ip
-		res.json({ message: "raph, wtf."+ clientIp })
-	});
-
-	server.listen(3000, (err) => {
-		if (err) throw err;
-		console.log('> Ready on http://localhost:3000');
-	});
+server.all('*', (req, res) => {
+	let clientIp = req.ip
+	res.json({ message: "raph, wtf. "+ clientIp })
 });
 
+module.exports = async (req, res) => {
+	await app.prepare();
+	return server(req, res);
+};
